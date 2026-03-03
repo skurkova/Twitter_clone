@@ -27,18 +27,21 @@
 ![Структура Twitter-clone.png](%D0%A1%D1%82%D1%80%D1%83%D0%BA%D1%82%D1%83%D1%80%D0%B0%20Twitter-clone.png)
 
 ## 🚀 Запуск сервиса
-1. Клонируем репозиторий с GitHub и переходим в каталог проекта:
+**1. Клонируем репозиторий с GitHub и переходим в каталог проекта:**
 
    `git clone https://github.com/skurkova/Twitter_clone`
    
    `cd Twitter_clone`
-2. Создаем .env из шаблона и настраиваем переменные:
+
+**2. Создаем .env из шаблона и настраиваем переменные:**
    
    `cp .env.example .env`
-3. Запускаем Docker Compose с помощью команды:
+
+**3. Запускаем Docker Compose с помощью команды:**
 
    `docker-compose up --build -d`
-4. Открываем браузер и переходим по адресам:
+
+**4. Открываем браузер и переходим по адресам:**
    - Фронтенд: http://localhost:8080/
    - API: http://localhost:8080/api/
    - Документация API (Swagger): http://localhost:5000/apidocs/
