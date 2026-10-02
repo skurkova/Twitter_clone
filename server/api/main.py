@@ -61,19 +61,24 @@ def create_app(test_config=None) -> Flask:
         """
         Заполнить базу данных пользователями
         """
-        user_test = User(name="test", api_key="test")
-        if user_test.api_key not in db.session.query(User.api_key).all():
-            db.session.add(user_test)
-            db.session.commit()
+        # 1. Проверяем, есть ли вообще пользователи в базе
+        has_users = db.session.query(User.id).first() is not None
 
-        for _ in range(20):
-            user = UserFactory()
-            users_api_keys = {
-                user.api_key for user in db.session.query(User.api_key).all()
-            }
-            if user.api_key not in users_api_keys:
-                db.session.add(user)
-            db.session.commit()
+        # 2. Если данных нет (база пуста) — переходим к заполнению
+        if not has_users:
+            user_test = User(name="test", api_key="test")
+            if user_test.api_key not in db.session.query(User.api_key).all():
+                db.session.add(user_test)
+                db.session.commit()
+
+            for _ in range(20):
+                user = UserFactory()
+                users_api_keys = {
+                    user.api_key for user in db.session.query(User.api_key).all()
+                }
+                if user.api_key not in users_api_keys:
+                    db.session.add(user)
+                db.session.commit()
         users = db.session.query(User).all()
         return (
             jsonify({"result": True, "users": [user.to_json() for user in users]}),
