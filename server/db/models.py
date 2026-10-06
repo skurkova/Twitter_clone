@@ -37,10 +37,12 @@ class Tweet(db.Model):
         return f"Tweet {self.content} author {self.author}"
 
     def to_json(self) -> Dict[str, Any]:
-        data_tweet = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        data_tweet["author"] = self.author.to_json() if self.author else None
-        data_tweet["likes"] = [like.to_json() for like in self.likes]
-        data_tweet["medias"] = [media.to_json() for media in self.medias]
+        data_tweet = {"id": self.id,
+                      "content": self.content,
+                      "count_likes": self.count_likes,
+                      "author": self.author.to_json() if self.author else None,
+                      "likes": [like.to_json() for like in self.likes],
+                      "attachments": [media.file_path for media in self.medias]}
         return data_tweet
 
 

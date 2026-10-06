@@ -96,18 +96,20 @@ def create_app(test_config=None) -> Flask:
         if isinstance(user, tuple):
             return user
 
-        tweet_data = request.form.get("tweet_data")
-        tweet_media_ids = request.form.get("tweet_media_ids", "[]")
+        data = request.get_json()
+        tweet_data = data.get("tweet_data")
+        tweet_media_ids = data.get("tweet_media_ids", [])
         new_tweet = Tweet(
             user_id=user.id, content=tweet_data, medias_ids=tweet_media_ids
         )
         db.session.add(new_tweet)
         db.session.flush()
 
-        for media_id in tweet_media_ids:
-            media = db.session.query(Media).get(media_id)
-            if media is not None:
-                media.tweet_id = new_tweet.id
+        if tweet_media_ids:
+            for media_id in tweet_media_ids:
+                media = db.session.query(Media).get(media_id)
+                if media is not None:
+                    media.tweet_id = new_tweet.id
         db.session.commit()
 
         return jsonify({"result": True, "tweet_id": new_tweet.id}), 201
@@ -352,6 +354,7 @@ def create_app(test_config=None) -> Flask:
             f.followed_id
             for f in db.session.query(Follow).filter_by(follower_id=user.id).all()
         ]
+        followed_users.append(user.id)
         if not followed_users:
             return (
                 jsonify(
